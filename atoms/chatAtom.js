@@ -3,7 +3,7 @@
 import { atom } from "recoil";
 
 export const handleChatState = atom({
-  key: "handlePostState",
+  key: "handleChatState",
   default: false,
 });
 

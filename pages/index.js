@@ -13,26 +13,29 @@ import Navbar from "../components/Navbar";
 
 import Sidebar from "../components/Sidebar";
 import Container from "../components/Container";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import { handleChatState, useSSRChatsState } from "../atoms/chatAtom";
 import chatHelper from "../libs/chatHelpler";
+import ChatContainer from "../components/ChatContainer";
 
 export default function Home({ chats }) {
   const { data: session } = useSession();
   const [handleChat, setHandleChat] = useRecoilState(handleChatState);
   const [useSsrChat, setUseSsrChat] = useRecoilState(useSSRChatsState);
+  const [RealTimePost, setRealTimePost] = useState([]);
+  console.log(RealTimePost);
   useEffect(() => {
     const fetchPosts = async () => {
-      const response = await fetch("/api/chat", {
+      const response = await fetch("/api/chat/?id=" + session.user.id, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
       });
 
       const responseData = await response.json();
       setRealTimePost(responseData);
-      setHandlePost(false);
-      setUseSSRPosts(false);
+      setUseSsrChat(false);
+      setHandleChat(false);
     };
     if (handleChat) {
       fetchPosts();
@@ -49,15 +52,16 @@ export default function Home({ chats }) {
         <Navbar />
         <Container>
           {/* {!chats && <h1 className=" w-2/5">Plas</h1>} */}
-          {!useSSRChatsState
-            ? RealTimePost.map((chat) => {
-                return <ChatList key={chat._id} chat={chat} />;
-              })
-            : chats.map((chat) => {
-                return <ChatList key={chat._id} chat={chat} />;
-              })}
-          {/* <ChatList /> */}
-
+          <ChatContainer>
+            {!useSsrChat
+              ? RealTimePost.map((chat) => {
+                  return <ChatList key={chat._id} chat={chat} />;
+                })
+              : chats.map((chat) => {
+                  return <ChatList key={chat._id} chat={chat} />;
+                })}
+          </ChatContainer>
+          ;{/* <ChatList /> */}
           <Msg />
           <Sidebar />
           {/* <Raw /> */}
