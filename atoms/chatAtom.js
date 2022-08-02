@@ -13,7 +13,7 @@ export const getChatState = atom({
 });
 export const selectedChatState = atom({
   key: "selctedChatPostState",
-  default: {},
+  default: null,
 });
 
 export const useSSRChatsState = atom({

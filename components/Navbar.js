@@ -6,7 +6,6 @@ import React from "react";
 import { signOut, useSession } from "next-auth/react";
 function Navbar() {
   const { data: session } = useSession();
-  console.log(session);
 
   return (
     <div className="px-5 py-5 flex justify-between items-center bg-white border-b-2">

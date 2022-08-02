@@ -3,15 +3,41 @@
 import { getSession, useSession } from "next-auth/react";
 import Head from "next/head";
 import Image from "next/image";
+import mongoose from "mongoose";
+import Chat from "../models/Chat";
+import User from "../models/User";
 
 import ChatList from "../components/ChatList";
 import Msg from "../components/Msg";
 import Navbar from "../components/Navbar";
-import Raw from "../components/Container";
+
 import Sidebar from "../components/Sidebar";
 import Container from "../components/Container";
+import { useEffect } from "react";
+import { useRecoilState } from "recoil";
+import { handleChatState, useSSRChatsState } from "../atoms/chatAtom";
+import chatHelper from "../libs/chatHelpler";
 
-export default function Home() {
+export default function Home({ chats }) {
+  const { data: session } = useSession();
+  const [handleChat, setHandleChat] = useRecoilState(handleChatState);
+  const [useSsrChat, setUseSsrChat] = useRecoilState(useSSRChatsState);
+  useEffect(() => {
+    const fetchPosts = async () => {
+      const response = await fetch("/api/chat", {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      });
+
+      const responseData = await response.json();
+      setRealTimePost(responseData);
+      setHandlePost(false);
+      setUseSSRPosts(false);
+    };
+    if (handleChat) {
+      fetchPosts();
+    }
+  }, [handleChat]);
   return (
     <div>
       <Head>
@@ -22,7 +48,15 @@ export default function Home() {
       <header>
         <Navbar />
         <Container>
-          <ChatList />
+          {/* {!chats && <h1 className=" w-2/5">Plas</h1>} */}
+          {!useSSRChatsState
+            ? RealTimePost.map((chat) => {
+                return <ChatList key={chat._id} chat={chat} />;
+              })
+            : chats.map((chat) => {
+                return <ChatList key={chat._id} chat={chat} />;
+              })}
+          {/* <ChatList /> */}
 
           <Msg />
           <Sidebar />
@@ -35,9 +69,9 @@ export default function Home() {
 
 export async function getServerSideProps(context) {
   const session = await getSession(context);
-  // if (!mongoose.connections[0].readyState) {
-  //   await mongoose.connect(process.env.MONGODB_URI);
-  // }
+  if (!mongoose.connections[0].readyState) {
+    await mongoose.connect(process.env.MONGODB_URI);
+  }
 
   if (!session) {
     return {
@@ -47,23 +81,23 @@ export async function getServerSideProps(context) {
       },
     };
   }
-  // let chats = await Chat.find({
-  //   users: { $elemMatch: { $eq: session.user.id } },
-  // })
-  //   .populate("users", "-password")
-  //   .populate("groupAdmin", "-password")
-  //   .populate("latestMessage")
-  //   .sort({ updatedAt: -1 });
+  let chats = await Chat.find({
+    users: { $elemMatch: { $eq: session.user.id } },
+  })
+    .populate("users", "-password")
+    .populate("groupAdmin", "-password")
+    .populate("latestMessage")
+    .sort({ updatedAt: -1 });
 
-  // chats = await User.populate(chats, {
-  //   path: "latestMessage.sender",
-  //   select: "name pic email",
-  // });
+  chats = await User.populate(chats, {
+    path: "latestMessage.sender",
+    select: "name pic email",
+  });
 
   return {
     props: {
       session,
-      // chats: JSON.parse(JSON.stringify(chats))
+      chats: JSON.parse(JSON.stringify(chats)),
     },
   };
 }
