@@ -27,6 +27,9 @@ function Navbar() {
           width={60}
           height={60}
           className="rounded-full"
+          onClick={() => {
+            signOut();
+          }}
         />
       </div>
     </div>
