@@ -1,13 +1,41 @@
 /** @format */
 
+import { useSession } from "next-auth/react";
 import Image from "next/image";
-import React from "react";
+import React, { useState } from "react";
 import { useRecoilState } from "recoil";
-import { MsgUserAtom, selectedChatState } from "../atoms/chatAtom";
+import {
+  messgeAtomState,
+  MsgUserAtom,
+  selectedChatState,
+} from "../atoms/chatAtom";
+import MsgSlider from "./MsgSlider";
 
 function Msg() {
+  const { data: session } = useSession();
   const [selectedChat, setSelectedChat] = useRecoilState(selectedChatState);
   const [MsgUserDetails, setMsgUSerAtom] = useRecoilState(MsgUserAtom);
+  const [messages, setMessages] = useRecoilState(messgeAtomState);
+  const [msg, setMsg] = useState("");
+  const sendMsg = async (e) => {
+    e.preventDefault();
+    const response = await fetch("/api/message", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        sender: session.user.id,
+        content: msg,
+        chatId: selectedChat._id,
+      }),
+    });
+    const respData = await response.json();
+
+    setMessages([...messages, respData]);
+
+    setMsg("");
+  };
   return !selectedChat ? (
     <div>
       <h1 className="text-black">Please Select a Chat.</h1>
@@ -31,12 +59,12 @@ function Msg() {
             <span className="absolute w-3 h-3 bg-green-600 rounded-full left-10 top-3"></span>
           </div>
           <div className="relative w-full p-6 overflow-y-auto h-[30rem]">
-            {/* <MsgSlider messages={Messages} /> */}
+            <MsgSlider />
           </div>
           <form
-          // onSubmit={(e) => {
-          //   sendMsg(e);
-          // }}
+            onSubmit={(e) => {
+              sendMsg(e);
+            }}
           >
             <div className="flex items-center justify-between w-full p-3 border-t border-gray-300">
               <button>
@@ -78,10 +106,10 @@ function Msg() {
                 className="block w-full py-2 pl-4 mx-3 bg-gray-100 rounded-full outline-none focus:text-gray-700"
                 name="message"
                 required
-                // onChange={(e) => {
-                //   setMsg(e.target.value);
-                // }}
-                // value={msg}
+                onChange={(e) => {
+                  setMsg(e.target.value);
+                }}
+                value={msg}
               />
               <button>
                 <svg
