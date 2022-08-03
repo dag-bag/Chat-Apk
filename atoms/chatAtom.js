@@ -25,12 +25,21 @@ export const isSelectState = atom({
   default: false,
 });
 
-export const getRightChatState = atom({
+export const AllAvailableChat = atom({
   key: "getRightChatState",
-  default: {},
+  default: [],
 });
 
 export const messgeAtomState = atom({
   key: "messgeAtomState",
   default: [],
+});
+export const RealtimeChat = atom({
+  key: "RealtimeChat",
+  default: [],
+});
+
+export const MsgUserAtom = atom({
+  key: "MsgUserAtom",
+  default: {},
 });

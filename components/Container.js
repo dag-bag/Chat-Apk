@@ -8,7 +8,7 @@ function Container(props) {
     // <!-- This is an example component -->
     <>
       <div className="container mx-auto shadow-lg rounded-lg h-[60vh]">
-        <div className="flex flex-row justify-between bg-white">
+        <div className="display flex justify-start bg-white">
           {props.children}
         </div>
       </div>

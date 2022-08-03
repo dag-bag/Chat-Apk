@@ -2,21 +2,33 @@
 
 import { useSession } from "next-auth/react";
 import Image from "next/image";
-import React from "react";
+import React, { useEffect } from "react";
 import { useRecoilState } from "recoil";
-import { selectedChatState } from "../atoms/chatAtom";
+import {
+  AllAvailableChat,
+  MsgUserAtom,
+  selectedChatState,
+} from "../atoms/chatAtom";
 import chatHelper from "../libs/chatHelpler";
 
 function ChatList({ chat }) {
   const { data: session } = useSession();
+
   const user = chatHelper(session?.user.id, chat?.users);
 
   const [selectedChat, setSelectedChat] = useRecoilState(selectedChatState);
+  const [MsgUserDetails, setMsgUSerAtom] = useRecoilState(MsgUserAtom);
   return (
     chat && (
       <>
         {" "}
-        <div className="flex flex-row py-4 px-2 justify-center items-center border-b-2">
+        <div
+          className="flex flex-row py-4 px-2 justify-center items-center border-b-2 cursor-pointer hover:bg-blue-500 hover:text-white"
+          onClick={() => {
+            setSelectedChat(chat);
+            setMsgUSerAtom(user);
+          }}
+        >
           <div className="w-1/4">
             <Image
               src={user?.pic}

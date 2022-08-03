@@ -15,7 +15,12 @@ import Sidebar from "../components/Sidebar";
 import Container from "../components/Container";
 import { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
-import { handleChatState, useSSRChatsState } from "../atoms/chatAtom";
+import {
+  AllAvailableChat,
+  handleChatState,
+  RealtimeChat,
+  useSSRChatsState,
+} from "../atoms/chatAtom";
 import chatHelper from "../libs/chatHelpler";
 import ChatContainer from "../components/ChatContainer";
 
@@ -23,17 +28,20 @@ export default function Home({ chats }) {
   const { data: session } = useSession();
   const [handleChat, setHandleChat] = useRecoilState(handleChatState);
   const [useSsrChat, setUseSsrChat] = useRecoilState(useSSRChatsState);
-  const [RealTimePost, setRealTimePost] = useState([]);
-  console.log(RealTimePost);
-  useEffect(() => {
-    const fetchPosts = async () => {
-      const response = await fetch("/api/chat/?id=" + session.user.id, {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-      });
+  const [RealTimePost, setRealTimePost] = useRecoilState(RealtimeChat);
 
-      const responseData = await response.json();
-      setRealTimePost(responseData);
+  useEffect(() => {
+    if (useSsrChat) {
+      setRealTimePost(chats);
+    }
+    const fetchPosts = async () => {
+      // const response = await fetch("/api/chat/?id=" + session.user.id, {
+      //   method: "GET",
+      //   headers: { "Content-Type": "application/json" },
+      // });
+
+      // const responseData = await response.json();
+
       setUseSsrChat(false);
       setHandleChat(false);
     };
@@ -41,6 +49,7 @@ export default function Home({ chats }) {
       fetchPosts();
     }
   }, [handleChat]);
+
   return (
     <div>
       <Head>
@@ -63,7 +72,7 @@ export default function Home({ chats }) {
           </ChatContainer>
           ;{/* <ChatList /> */}
           <Msg />
-          <Sidebar />
+          {/* <Sidebar /> */}
           {/* <Raw /> */}
         </Container>
       </header>

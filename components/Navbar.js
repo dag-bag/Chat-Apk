@@ -7,7 +7,11 @@ import { signOut, useSession } from "next-auth/react";
 import SearchResult from "./SearchResult";
 import Loader from "./Loder";
 import { useRecoilState } from "recoil";
-import { handleChatState, useSSRChatsState } from "../atoms/chatAtom";
+import {
+  handleChatState,
+  RealtimeChat,
+  useSSRChatsState,
+} from "../atoms/chatAtom";
 function Navbar() {
   const { data: session } = useSession();
   const [Query, setQuery] = useState("");
@@ -16,7 +20,8 @@ function Navbar() {
   const [Users, setUsers] = useState([]);
   const [handleChat, setHandleChat] = useRecoilState(handleChatState);
   const [useSsrChat, setUseSsrChat] = useRecoilState(useSSRChatsState);
-
+  const [RealTimePost, setRealTimePost] = useRecoilState(RealtimeChat);
+  // console.log(RealTimePost);
   const handleSearch = async (e) => {
     e.preventDefault();
     if (Query.length <= 0) {
@@ -34,8 +39,10 @@ function Navbar() {
 
   const accessChat = async (id) => {
     if (id === session.user.id) {
+      console.log("You can't chat with yourself");
       return;
     }
+
     const response = await fetch("/api/chat", {
       method: "POST",
       body: JSON.stringify({
@@ -47,7 +54,8 @@ function Navbar() {
       },
     });
     const respData = await response.json();
-    console.log(respData);
+    setRealTimePost([respData, ...RealTimePost]);
+
     setHandleChat(true);
     setUseSsrChat(false);
     setResults(false);
