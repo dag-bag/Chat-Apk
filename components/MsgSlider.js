@@ -33,18 +33,18 @@ function MsgSlider() {
         }`}
         key={m._id}
       >
-        {(isSameSender(messages, m, i, session.user.id) ||
-          isLastMessage(messages, i, session.user.id)) && (
-          <div>
-            <Image
-              className="object-cover w-10 h-10 rounded-full"
-              src={m.sender.pic}
-              alt="username"
-              width={40}
-              height={40}
-            />
-          </div>
-        )}
+        {/* {(isSameSender(messages, m, i, session.user.id) ||
+          isLastMessage(messages, i, session.user.id)) && ( */}
+        <div className="mx-2 mt-2">
+          <Image
+            className="object-cover w-10 h-10 rounded-full "
+            src={m.sender.pic}
+            alt="username"
+            width={40}
+            height={40}
+          />
+        </div>
+        {/* )} */}
         <span
           className={`${
             m.sender._id === session.user.id ? "bg-[#BEE3F8]" : "bg-[#B9F5D0]"
