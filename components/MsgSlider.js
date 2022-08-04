@@ -21,7 +21,7 @@ function MsgSlider() {
 
   const socketInitializer = async () => {
     await fetch("/api/socket");
-    socket = io();
+    socket = io("https://chat-apk.vercel.app/");
 
     socket.on("connection", () => {
       setsocketConnected(true);
