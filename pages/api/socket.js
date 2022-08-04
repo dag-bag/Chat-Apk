@@ -5,7 +5,7 @@ import { Server } from "socket.io";
 const ioHandler = (req, res) => {
   if (!res.socket.server.io) {
     const io = new Server(res.socket.server);
-
+    io.origins("*:*");
     io.on("connection", (socket) => {
       // socket.broadcast.emit("a user connected");
       socket.on("setup", (id) => {
