@@ -11,6 +11,7 @@ import { messgeAtomState, selectedChatState } from "../atoms/chatAtom";
 import { notificationAtom } from "../atoms/notificaionAtom";
 var socket;
 var selectedChatCompare;
+
 function MsgSlider() {
   const { data: session } = useSession();
   const [selectedChat, setSelectedChat] = useRecoilState(selectedChatState);
@@ -20,7 +21,7 @@ function MsgSlider() {
   const [notification, setNotification] = useRecoilState(notificationAtom);
 
   const socketInitializer = async () => {
-    socket = io("https://chat-apk.vercel.app");
+    socket = io();
     await fetch("/api/socket");
 
     socket.on("connection", () => {
