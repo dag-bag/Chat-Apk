@@ -4,7 +4,12 @@ import { Server } from "socket.io";
 
 const ioHandler = (req, res) => {
   if (!res.socket.server.io) {
-    const io = new Server(res.socket.server);
+    const io = new Server(res.socket.server, {
+      cors: {
+        origin: "https://chat-apk.vercel.app/",
+        methods: ["GET", "POST"],
+      },
+    });
 
     io.on("connection", (socket) => {
       // socket.broadcast.emit("a user connected");
