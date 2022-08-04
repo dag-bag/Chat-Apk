@@ -21,7 +21,9 @@ function MsgSlider() {
   const [notification, setNotification] = useRecoilState(notificationAtom);
 
   const socketInitializer = async () => {
-    socket = io();
+    socket = io("https://chat-apk.vercel.app", {
+      transports: ["websocket"],
+    });
     await fetch("/api/socket");
 
     socket.on("connection", () => {
