@@ -24,7 +24,7 @@ function MsgSlider() {
     socket = io("https://chat-apk.vercel.app", {
       transports: ["websocket"],
     });
-    await fetch("/api/socket");
+    await fetch("/api/socket/");
 
     socket.on("connection", () => {
       setsocketConnected(true);
