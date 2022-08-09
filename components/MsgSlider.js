@@ -21,12 +21,12 @@ function MsgSlider() {
   const [notification, setNotification] = useRecoilState(notificationAtom);
 
   const socketInitializer = async () => {
-    const socket = io.connect("https://chat-apk.vercel.app/api/socket", {
+    const socket = io.connect("https://chat-apk.vercel.app", {
       path: "/api/socket",
     });
 
     // socket = io("ttps://chat-apk.vercel.app", { path: "/api/socket" });
-    // await fetch("https://chat-apk.vercel.app/api/socket/");
+    await fetch("https://chat-apk.vercel.app/api/socket");
 
     socket.on("connection", () => {
       setsocketConnected(true);
